@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  View, Text, Image, TouchableWithoutFeedback,
+  View, Text, Image
 } from 'react-native';
 import _ from 'lodash';
 import { convertToObject } from './Convertors';
@@ -19,7 +19,7 @@ class CNRichTextView extends Component {
   }
 
   componentDidMount() {
-    const { text, styleList} = this.props;
+    const { text, styleList } = this.props;
     const styles = styleList ? styleList : null;
 
     const items = convertToObject(text, styles);
@@ -30,7 +30,7 @@ class CNRichTextView extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { text, styleList} = this.props;
+    const { text, styleList } = this.props;
 
     if (prevProps.text != text) {
       const styles = styleList ? styleList : null;
@@ -60,11 +60,11 @@ class CNRichTextView extends Component {
         }}
       >
         {
-                    _.map(input.content, item => (
-                      <CNStyledText key={item.id} style={item.styleList} text={item.text} />
-                    ))
+          _.map(input.content, item => (
+            <CNStyledText key={item.id} style={item.styleList} text={item.text} />
+          ))
 
-                }
+        }
       </Text>
     );
   }
@@ -99,62 +99,62 @@ class CNRichTextView extends Component {
     );
   }
 
-    onLayout = (event) => {
-      const {
-        x,
-        y,
-        width,
-        height,
-      } = event.nativeEvent.layout;
+  onLayout = (event) => {
+    const {
+      x,
+      y,
+      width,
+      height,
+    } = event.nativeEvent.layout;
 
-      this.setState({
-        layoutWidth: width - 2,
-      });
-    }
+    this.setState({
+      layoutWidth: width - 2,
+    });
+  }
 
-    render() {
-      const { contents } = this.state;
-      const { style } = this.props;
+  render() {
+    const { contents } = this.state;
+    const { style } = this.props;
 
-      const styles = style || {};
-      return (
-        <View
-          onLayout={this.onLayout}
-          style={[styles]}
-          onStartShouldSetResponder={(evt) => {
-            this.setState({ isScrolled: false },
-              () => { setTimeout(this.flip, 100); });
+    const styles = style || {};
+    return (
+      <View
+        onLayout={this.onLayout}
+        style={[styles]}
+        onStartShouldSetResponder={(evt) => {
+          this.setState({ isScrolled: false },
+            () => { setTimeout(this.flip, 100); });
 
-            return true;
-          }}
-          onResponderMove={(evt) => {
-            const touch = evt.touchHistory.touchBank.find(obj => obj != undefined && obj != null);
-            if ((touch.startPageY - touch.currentPageY) > 2
-                    || (touch.startPageY - touch.currentPageY) < -2) {
-              this.setState({ isScrolled: true });
-            } else {
-              this.setState({ isScrolled: false });
+          return true;
+        }}
+        onResponderMove={(evt) => {
+          const touch = evt.touchHistory.touchBank.find(obj => obj != undefined && obj != null);
+          if ((touch.startPageY - touch.currentPageY) > 2
+            || (touch.startPageY - touch.currentPageY) < -2) {
+            this.setState({ isScrolled: true });
+          } else {
+            this.setState({ isScrolled: false });
+          }
+          return true;
+        }}
+      >
+        {
+          _.map(contents, (item, index) => {
+            if (item.component === 'text') {
+              return (
+                this.renderText(item, index)
+              );
             }
-            return true;
-          }}
-        >
-          {
-                    _.map(contents, (item, index) => {
-                      if (item.component === 'text') {
-                        return (
-                          this.renderText(item, index)
-                        );
-                      }
-                      if (item.component === 'image') {
-                        return (
-                          this.renderImage(item, index)
-                        );
-                      }
-                    })
-                }
-        </View>
-      );
-    }
+            if (item.component === 'image') {
+              return (
+                this.renderImage(item, index)
+              );
+            }
+          })
+        }
+      </View>
+    );
+  }
 }
 
 export default CNRichTextView;
